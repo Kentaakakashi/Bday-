@@ -222,10 +222,3 @@ if(location.pathname.includes("edit.html") || location.pathname.includes("record
     MUSIC.currentTime = 0;
   }catch(e){}
 }
-
-window.addEventListener("beforeunload", () => {
-  try {
-    localStorage.setItem("bgTime", MUSIC.currentTime);
-    localStorage.setItem("bgPlay", MUSIC.paused ? "no" : "yes");
-  } catch (e) {}
-});
