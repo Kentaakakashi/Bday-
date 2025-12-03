@@ -41,27 +41,6 @@ function initBeatSystem(){
 function playClick(){ try{ CLICK.currentTime = 0; CLICK.play(); }catch(e){} }
 
 /* auto-play music on first user interaction (many browsers block autoplay) */
-function initMusicOnFirstInteraction(){
-  function start(){
-    try{ 
-      if (SHOULD_PLAY) {
-        MUSIC.currentTime = SAVED_TIME;
-        MUSIC.play();
-        if(!audioCtx) initBeatSystem();
-      }
-    }catch(e){}
-    window.removeEventListener('pointerdown', start);
-  }
-
-  // If already playing before, resume instantly
-  if (SHOULD_PLAY) {
-    start();
-  } else {
-    // Otherwise wait for first user interaction
-    window.addEventListener('pointerdown', start);
-  }
-}
-initMusicOnFirstInteraction();
 
 /* sparkle cursor */
 (function(){
