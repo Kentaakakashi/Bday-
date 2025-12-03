@@ -314,3 +314,22 @@ html, body {
   50% { transform: translateY(-12px) scale(1.2); opacity: 1; }
   100% { transform: translateY(-24px) scale(.9); opacity: 0; }
 }
+
+.back-link{
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 9999;
+  text-decoration: none;
+  font-weight: 600;
+  color: #ff5fa3;
+  background: rgba(255,255,255,0.6);
+  padding: 8px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  transition: transform .2s ease;
+}
+.back-link:hover{
+  transform: scale(1.08);
+}
