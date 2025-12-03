@@ -27,7 +27,8 @@ setInterval(()=>{
   const el = document.createElement('div'); el.className='float-emoji';
   const pool = ['💖','🌸','✨','🎀','💕','💗','🎉','😝'];
   el.textContent = pool[Math.floor(Math.random()*pool.length)];
-  el.style.left = (Math.random()*80 + 8) + 'vw';
+  emoji.style.left = Math.random() * window.innerWidth + "px";
+  emoji.style.bottom = "-40px";
   el.style.fontSize = (18 + Math.random()*36) + 'px';
   el.style.animationDuration = (5 + Math.random()*5) + 's';
   document.body.appendChild(el);
