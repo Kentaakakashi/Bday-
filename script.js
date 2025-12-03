@@ -268,3 +268,4 @@ if(location.pathname.includes("edit.html") || location.pathname.includes("record
     MUSIC.currentTime = 0;
   }catch(e){}
 }
+
