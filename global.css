@@ -333,3 +333,20 @@ html, body {
 .back-link:hover{
   transform: scale(1.08);
 }
+
+/* PAGE-SPECIFIC BACKGROUNDS */
+.memory-page{
+  background: linear-gradient(160deg, #ffe6f2, #ffb3c6);
+}
+
+.record-page{
+  background: linear-gradient(160deg, #e0f7fa, #80deea);
+}
+
+.edit-page{
+  background: linear-gradient(160deg, #fff3e0, #ffb74d);
+}
+
+.surprise-page{
+  background: radial-gradient(circle at center, #ff9a9e, #fad0c4);
+}
