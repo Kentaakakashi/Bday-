@@ -232,3 +232,85 @@ html, body {
 
 /* ---------- Small text ---------- */
 .small-muted { color:#9b6b86; font-size:1rem; }
+
+/* === WISH PAGE BACKGROUND === */
+.wish-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffb3d9, #b388ff, #8fd3f4);
+  background-size: 400% 400%;
+  animation: bgFlow 14s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes bgFlow {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+/* === PAGE WRAP === */
+.wish-page {
+  width: 88%;
+  max-width: 520px;
+  text-align: center;
+}
+
+/* === WISH BOX (THE GLOWY MAIN CHARACTER) === */
+.wish-box {
+  position: relative;
+  margin-top: 20px;
+  padding: 28px 22px;
+  min-height: 220px;
+
+  background: linear-gradient(135deg, 
+    rgba(255,255,255,0.32),
+    rgba(255,192,255,0.22),
+    rgba(255,255,255,0.18)
+  );
+  backdrop-filter: blur(16px);
+
+  border-radius: 28px;
+  border: 2px solid rgba(255,255,255,0.5);
+
+  box-shadow:
+    0 0 25px rgba(255,105,180,0.45),
+    inset 0 0 16px rgba(255,255,255,0.35);
+
+  animation: floatBox 5s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes floatBox {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* === WISH TEXT === */
+#wished-text, #typed-text {
+  font-family: "Comic Neue", "Poppins", cursive;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  white-space: pre-wrap;
+}
+
+/* === SPARKLES INSIDE BOX === */
+.wish-sparkle {
+  position: absolute;
+  animation: sparkleFloat 4s linear infinite;
+  opacity: 0.75;
+}
+
+.s1 { top: -10px; left: 18px; font-size: 18px; }
+.s2 { top: 20%; right: -10px; font-size: 22px; }
+.s3 { bottom: -12px; left: 40%; font-size: 20px; }
+.s4 { top: 60%; left: -8px; font-size: 18px; }
+
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(1); opacity: .4; }
+  50% { transform: translateY(-12px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-24px) scale(.9); opacity: 0; }
+}
