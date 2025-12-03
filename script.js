@@ -1,5 +1,4 @@
-const SHOULD_PLAY = localStorage.getItem("bgPlay") === "yes";
-const SAVED_TIME = parseFloat(localStorage.getItem("bgTime") || "0");
+
 
 const PAGE_COLORS = {
   "index.html": ["#ff69b4", "#ffc1dc", "#ff2d8f"],
