@@ -41,7 +41,10 @@ function playClick(){ try{ CLICK.currentTime = 0; CLICK.play(); }catch(e){} }
 /* auto-play music on first user interaction (many browsers block autoplay) */
 function initMusicOnFirstInteraction(){
   function start(){
-    try{ MUSIC.play(); }catch(e){}
+    try{ 
+      MUSIC.play(); 
+      if(!audioCtx) initBeatSystem();
+    }catch(e){}
     window.removeEventListener('pointerdown', start);
   }
   window.addEventListener('pointerdown', start);
