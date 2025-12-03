@@ -384,6 +384,20 @@ html, body {
 
   animation: spikeFlicker 0.25s infinite alternate;
 }
+@keyframes spikeFlicker{
+  from{
+    opacity: 0.75;
+  }
+  to{
+    opacity: 1;
+  }
+}
+
+@keyframes bassShock{
+  0%{ transform: scaleY(1); }
+  50%{ transform: scaleY(1.4); }
+  100%{ transform: scaleY(1); }
+}
 
 /* top */
 .beat-top{
