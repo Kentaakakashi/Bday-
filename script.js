@@ -1,4 +1,7 @@
-
+const CLICK = new Audio('assets/click.mp3');
+const MUSIC = new Audio('assets/music.mp3');
+MUSIC.loop = true;
+MUSIC.volume = 0.45;
 
 const PAGE_COLORS = {
   "index.html": ["#ff69b4", "#ffc1dc", "#ff2d8f"],
