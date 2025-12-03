@@ -353,17 +353,56 @@ html, body {
 #beat-border{
   position: fixed;
   inset: 0;
-  display: grid;
-  grid-template-columns: repeat(40, 1fr);
-  grid-template-rows: repeat(4, 1fr);
   pointer-events: none;
   z-index: 9999;
 }
 
-#beat-border span{
+/* shared style for all sides */
+.beat-row{
+  position: absolute;
+  display: flex;
+  gap: 3px;
+}
+
+.beat-row span{
+  width: 6px;
+  height: 14px;
+  background: red;
+  transform-origin: center bottom;
+  transition: transform 0.05s linear, background 0.1s linear;
+  border-radius: 2px;
+}
+
+/* top */
+.beat-top{
+  top: 8px;
+  left: 0;
   width: 100%;
+  justify-content: space-evenly;
+}
+
+/* bottom */
+.beat-bottom{
+  bottom: 8px;
+  left: 0;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+/* left */
+.beat-left{
+  left: 8px;
+  top: 0;
   height: 100%;
-  transform-origin: bottom;
-  opacity: 0.85;
-  transition: transform 0.08s linear, background 0.12s linear;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+/* right */
+.beat-right{
+  right: 8px;
+  top: 0;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
