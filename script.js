@@ -15,6 +15,26 @@ const ACTIVE_COLORS = PAGE_COLORS[page] || ["#ff69b4", "#ff79c6", "#ff005d"];
 const CLICK = new Audio('assets/click.mp3');
 const MUSIC = new Audio('assets/music.mp3');
 MUSIC.loop = true; MUSIC.volume = 0.45;
+const ENABLE_BEAT_BORDER = !location.pathname.includes("edit.html") && 
+                           !location.pathname.includes("recordings.html");
+
+let audioCtx, analyser, dataArray;
+
+function initBeatSystem(){
+  if(!ENABLE_BEAT_BORDER) return;
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaElementSource(MUSIC);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+  dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  createBeatBorder();
+  animateBeatBorder();
+}
 
 function playClick(){ try{ CLICK.currentTime = 0; CLICK.play(); }catch(e){} }
 
