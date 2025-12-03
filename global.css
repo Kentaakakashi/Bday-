@@ -432,3 +432,12 @@ html, body {
   flex-direction: column;
   justify-content: space-evenly;
 }
+body.beat-shock{
+  animation: screenShock 0.08s ease;
+}
+
+@keyframes screenShock{
+  0%{ filter: brightness(1); }
+  50%{ filter: brightness(1.25); }
+  100%{ filter: brightness(1); }
+}
