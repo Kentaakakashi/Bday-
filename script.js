@@ -1,3 +1,16 @@
+const PAGE_COLORS = {
+  "index.html": ["#ff69b4", "#ffc1dc", "#ff2d8f"],
+  "menu.html": ["#ff4fd8", "#ff79c6", "#ff177a"],
+  "memories.html": ["#ff9f1a", "#ffd36a", "#ff7f00"],
+  "wishes.html": ["#7f5cff", "#b28dff", "#5a2bff"],
+  "recordings.html": ["#00ffe1", "#00bcd4", "#0097a7"],
+  "edit.html": ["#ff0033", "#ff6a00", "#ff0000"],
+  "surprise.html": ["#ffd700", "#ffb700", "#ff8c00"]
+};
+
+const page = location.pathname.split("/").pop();
+const ACTIVE_COLORS = PAGE_COLORS[page] || ["#ff69b4", "#ff79c6", "#ff005d"];
+
 /* Ultra-decorated script: cursor, floats, carousel, typewriter, recordings, UI sounds, transitions */
 const CLICK = new Audio('assets/click.mp3');
 const MUSIC = new Audio('assets/music.mp3');
