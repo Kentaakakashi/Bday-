@@ -366,11 +366,23 @@ html, body {
 
 .beat-row span{
   width: 6px;
-  height: 14px;
-  background: red;
+  height: 16px;
+  background: linear-gradient(to top, #fff, red);
   transform-origin: center bottom;
-  transition: transform 0.05s linear, background 0.1s linear;
-  border-radius: 2px;
+  transition: 
+    transform 0.05s linear,
+    background 0.08s linear,
+    filter 0.08s linear,
+    box-shadow 0.08s linear;
+  border-radius: 4px;
+
+  filter: blur(0.2px) brightness(1.1);
+  box-shadow:
+    0 0 6px currentColor,
+    0 0 14px currentColor,
+    0 0 30px currentColor;
+
+  animation: spikeFlicker 0.25s infinite alternate;
 }
 
 /* top */
