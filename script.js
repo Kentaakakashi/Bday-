@@ -170,3 +170,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
     btn.animate([{transform:'translateY(6px) scale(.98)'},{transform:'translateY(-4px) scale(1.02)'},{transform:'translateY(0px) scale(1)'}], {duration:900, iterations:1, easing:'cubic-bezier(.2,.9,.3,1)'});
   });
 });
+
+function createBeatBorder(){
+  const border = document.createElement("div");
+  border.id = "beat-border";
+  document.body.appendChild(border);
+
+  for(let i=0;i<160;i++){
+    const bar = document.createElement("span");
+    border.appendChild(bar);
+  }
+}
+
+function animateBeatBorder(){
+  if(!analyser) return;
+
+  requestAnimationFrame(animateBeatBorder);
+  analyser.getByteFrequencyData(dataArray);
+
+  const bars = document.querySelectorAll("#beat-border span");
+  bars.forEach((bar,i)=>{
+    const v = dataArray[i % dataArray.length];
+    const scale = Math.max(0.2, v / 160);
+    bar.style.transform = `scale(${scale})`;
+
+    const hue = (v * 2) % 360;
+    bar.style.background = `hsl(${hue},100%,60%)`;
+  });
+}
