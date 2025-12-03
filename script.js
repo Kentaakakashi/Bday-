@@ -3,6 +3,49 @@ const MUSIC = new Audio('assets/music.mp3');
 MUSIC.loop = true;
 MUSIC.volume = 0.45;
 
+let audioCtx = null;
+let analyser = null;
+let dataArray = null;
+let beatInitialized = false;
+
+function playClick(){
+  try{
+    CLICK.currentTime = 0;
+    CLICK.play();
+  }catch(e){}
+}
+
+function unlockAudioSystem(){
+  try{
+    const savedTime = parseFloat(localStorage.getItem("bgTime") || "0");
+    MUSIC.currentTime = savedTime;
+    MUSIC.play();
+
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaElementSource(MUSIC);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+    }
+
+    if(!beatInitialized){
+      createBeatBorder();
+      animateBeatBorder();
+      beatInitialized = true;
+    }
+  }catch(e){}
+}
+
+window.addEventListener("pointerdown", unlockAudioSystem, { once:true });
+
+window.addEventListener("beforeunload", ()=>{
+  try{ localStorage.setItem("bgTime", MUSIC.currentTime); }catch(e){}
+});
+
 const PAGE_COLORS = {
   "index.html": ["#ff69b4", "#ffc1dc", "#ff2d8f"],
   "menu.html": ["#ff4fd8", "#ff79c6", "#ff177a"],
