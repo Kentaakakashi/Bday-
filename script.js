@@ -198,3 +198,9 @@ function animateBeatBorder(){
     bar.style.background = `hsl(${hue},100%,60%)`;
   });
 }
+if(location.pathname.includes("edit.html") || location.pathname.includes("recordings.html")){
+  try{
+    MUSIC.pause();
+    MUSIC.currentTime = 0;
+  }catch(e){}
+}
