@@ -174,12 +174,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
 function createBeatBorder(){
   const border = document.createElement("div");
   border.id = "beat-border";
-  document.body.appendChild(border);
 
-  for(let i=0;i<160;i++){
-    const bar = document.createElement("span");
-    border.appendChild(bar);
-  }
+  const sides = ["top","bottom","left","right"];
+  sides.forEach(side=>{
+    const row = document.createElement("div");
+    row.className = `beat-row beat-${side}`;
+
+    const count = side === "top" || side === "bottom" ? 48 : 24;
+
+    for(let i=0;i<count;i++){
+      const bar = document.createElement("span");
+      row.appendChild(bar);
+    }
+    border.appendChild(row);
+  });
+
+  document.body.appendChild(border);
 }
 
 function animateBeatBorder(){
@@ -188,15 +198,32 @@ function animateBeatBorder(){
   requestAnimationFrame(animateBeatBorder);
   analyser.getByteFrequencyData(dataArray);
 
-  const bars = document.querySelectorAll("#beat-border span");
+  const bars = document.querySelectorAll(".beat-row span");
+
+  let bass = dataArray[2]; // low frequency hit
+
   bars.forEach((bar,i)=>{
     const v = dataArray[i % dataArray.length];
-    const scale = Math.max(0.2, v / 160);
-    bar.style.transform = `scale(${scale})`;
+    const scale = Math.max(0.3, v / 120);
 
-    const hue = (v * 2) % 360;
+    bar.style.transform = `scaleY(${scale})`;
+
+    const hue = (v * 2.5) % 360;
     bar.style.background = `hsl(${hue},100%,60%)`;
+    bar.style.color = `hsl(${hue},100%,60%)`;
+
+    bar.style.boxShadow = `
+      0 0 ${10 + v/6}px hsl(${hue},100%,60%),
+      0 0 ${20 + v/3}px hsl(${hue},100%,60%),
+      0 0 ${40 + v/2}px hsl(${hue},100%,60%)
+    `;
   });
+
+  /* BIG BASS SCREEN SHOCK */
+  if(bass > 180){
+    document.body.classList.add("beat-shock");
+    setTimeout(()=> document.body.classList.remove("beat-shock"), 80);
+  }
 }
 if(location.pathname.includes("edit.html") || location.pathname.includes("recordings.html")){
   try{
