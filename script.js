@@ -25,7 +25,7 @@ function playClick(){
 }
 
 /* Unlock audio only once */
-function unlockAudioSystem(){
+function startMusicSystem(){
   try{
     const savedTime = parseFloat(localStorage.getItem("bgTime") || "0");
     MUSIC.currentTime = savedTime;
@@ -48,7 +48,7 @@ function unlockAudioSystem(){
       analyser.connect(audioCtx.destination);
     }
 
-    if(!beatInitialized && analyser){
+    if(!beatInitialized){
       createBeatBorder();
       animateBeatBorder();
       beatInitialized = true;
@@ -56,8 +56,13 @@ function unlockAudioSystem(){
   }catch(e){}
 }
 
-window.addEventListener("pointerdown", unlockAudioSystem, { once:true });
+// ✅ TRY TO AUTOPLAY IMMEDIATELY
+startMusicSystem();
 
+// ✅ FALLBACK FOR STRICT BROWSERS
+window.addEventListener("click", startMusicSystem, { once:true });
+
+// ✅ SAVE TIME ON EXIT
 window.addEventListener("beforeunload", ()=>{
   try{
     localStorage.setItem("bgTime", MUSIC.currentTime);
