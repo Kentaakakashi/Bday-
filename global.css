@@ -466,3 +466,29 @@ body.beat-shock {
   transform: scale(1.01);
   filter: brightness(1.25) saturate(1.4) contrast(1.1);
 }
+
+#musicToggle{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99999;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff4fd8, #7f5cff);
+  color: white;
+  box-shadow: 0 0 15px rgba(255,0,150,.6);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+#musicToggle:hover{
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(255,0,150,.9);
+}
+
+#musicToggle:active{
+  transform: scale(.92);
+}
