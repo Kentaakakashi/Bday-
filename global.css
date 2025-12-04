@@ -443,26 +443,26 @@ body.beat-shock{
 }
 
 /* ===== BEAT SCREEN GLOW ===== */
-body::after{
-  content:'';
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:9998;
-  background: radial-gradient(circle at center,
-    rgba(255,0,150,0.25),
-    transparent 55%
-  );
-  opacity:0;
-  transition: opacity .08s linear;
+
+
+/* ===== REACTOR MODE SCREEN GLOW ===== */
+#screen-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,0);
+  transition: box-shadow 0.06s linear;
 }
 
-body.beat-flash::after{
-  opacity:1;
+#screen-glow.active {
+  box-shadow:
+    inset 0 0 120px currentColor,
+    inset 0 0 220px currentColor;
 }
 
-body.beat-shock{
-  filter: brightness(1.18) saturate(1.25);
-  transform: scale(1.006);
-  transition: filter .05s linear, transform .05s linear;
+body.beat-shock {
+  transform: scale(1.01);
+  filter: brightness(1.25) saturate(1.4) contrast(1.1);
 }
