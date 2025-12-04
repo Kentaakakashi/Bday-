@@ -232,3 +232,17 @@ function animateBeatBorder(){
     }, 70);
   }
 }
+
+const musicBtn = document.getElementById("musicToggle");
+
+if(musicBtn){
+  musicBtn.addEventListener("click", ()=>{
+    if(MUSIC.paused){
+      MUSIC.play();
+      musicBtn.textContent = "⏸️";
+    }else{
+      MUSIC.pause();
+      musicBtn.textContent = "▶️";
+    }
+  });
+}
