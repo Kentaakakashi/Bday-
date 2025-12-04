@@ -34,24 +34,11 @@ html,body{
 .page-exit-active { transition: all .45s ease; opacity:0; transform: translateY(12px) scale(.97); }
 
 /* =======================
-   SPARKLE CURSOR
+   SPARKLE CURSOR (FIXED)
 ======================= */
 body { cursor:none; }
 
-.cursor-spark {
-  position:fixed;
-  width:14px;
-  height:14px;
-  border-radius:50%;
-  pointer-events:none;
-  z-index:99999;
-  background: radial-gradient(circle,#fff,#ff77c8 60%,transparent 70%);
-  box-shadow:0 0 12px #ff77c8,0 0 24px #ff77c8;
-  transform: translate(-50%,-50%);
-  transition: left .06s linear, top .06s linear;
-}
-
-.cursor-trail{
+.spark-trail{
   position: fixed;
   width: 12px;
   height: 12px;
@@ -60,7 +47,7 @@ body { cursor:none; }
   background: radial-gradient(circle,#fff,#ff5fa3 60%,transparent 70%);
   box-shadow:0 0 12px #ff5fa3,0 0 24px #ff5fa3;
   transform:translate(-50%,-50%);
-  animation: trailFade .6s linear forwards;
+  animation: trailFade .5s linear forwards;
 }
 @keyframes trailFade{
   to{opacity:0; transform:translate(-50%,-50%) scale(.2);}
@@ -156,9 +143,9 @@ body { cursor:none; }
 }
 
 /* =======================
-   BACKGROUND VIDEO
+   BACKGROUND VIDEO ✅ FIXED ID
 ======================= */
-#bg-video{
+#bgVideo{
   position: fixed;
   inset: 0;
   width:100vw;
@@ -194,13 +181,13 @@ body { cursor:none; }
 }
 
 /* =======================
-   BEAT BORDER
+   BEAT BORDER (OPTIMIZED)
 ======================= */
 #beat-border{
   position: fixed;
   inset:0;
   pointer-events:none;
-  z-index:9999;
+  z-index:9998;
 }
 
 .beat-row{
@@ -214,15 +201,8 @@ body { cursor:none; }
   height:16px;
   border-radius:4px;
   background: linear-gradient(to top,#ffffff,#ff77c8);
-  box-shadow:
-    0 0 6px rgba(255,120,200,.4),
-    0 0 14px rgba(255,120,200,.3);
+  box-shadow: 0 0 8px rgba(255,120,200,.4);
   transform-origin:center bottom;
-  animation: spikeFlicker .35s infinite alternate;
-}
-@keyframes spikeFlicker{
-  from{opacity:.75}
-  to{opacity:1}
 }
 
 .beat-top{ top:8px; left:0; width:100%; justify-content:space-evenly }
@@ -231,20 +211,17 @@ body { cursor:none; }
 .beat-right{ right:8px; top:0; height:100%; flex-direction:column; justify-content:space-evenly }
 
 /* =======================
-   SCREEN GLOW (CLEAN)
+   SCREEN GLOW ✅ FIXED Z-INDEX
 ======================= */
 #screen-glow{
   position: fixed;
   inset:0;
   pointer-events:none;
-  z-index:0;
+  z-index:9997;
   opacity:0;
-  filter: blur(140px);
+  filter: blur(160px);
   background: radial-gradient(circle, rgba(255,120,200,.25), transparent 70%);
   transition: opacity .12s linear;
-}
-#screen-glow.active{
-  opacity:1;
 }
 
 /* =======================
