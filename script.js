@@ -198,11 +198,28 @@ function animateBeatBorder(){
   requestAnimationFrame(animateBeatBorder);
   analyser.getByteFrequencyData(dataArray);
 
-  document.querySelectorAll(".beat-row span").forEach((bar,i)=>{
+  let bass = dataArray[2];
+  const bars = document.querySelectorAll(".beat-row span");
+
+  bars.forEach((bar,i)=>{
     const v = dataArray[i % dataArray.length];
     const scale = Math.max(0.3, v / 120);
+
     bar.style.transform = `scaleY(${scale})`;
-    bar.style.background = `hsl(${v*2.2},100%,60%)`;
-    bar.style.boxShadow = `0 0 ${12+v/4}px currentColor`;
+
+    const hue = (v * 2.2) % 360;
+    bar.style.background = `hsl(${hue},100%,60%)`;
+    bar.style.boxShadow = `0 0 ${14 + v/3}px hsl(${hue},100%,60%)`;
   });
+
+  /* ===== BASS SCREEN GLOW + SHOCK ===== */
+  if(bass > 160){
+    document.body.classList.add("beat-flash");
+    document.body.classList.add("beat-shock");
+
+    setTimeout(()=>{
+      document.body.classList.remove("beat-flash");
+      document.body.classList.remove("beat-shock");
+    }, 80);
+  }
 }
