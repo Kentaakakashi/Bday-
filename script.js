@@ -1,3 +1,7 @@
+const screenGlow = document.createElement("div");
+screenGlow.id = "screen-glow";
+document.body.appendChild(screenGlow);
+
 /* =========================
    CLEAN MASTER AUDIO + BEAT ENGINE
    ========================= */
