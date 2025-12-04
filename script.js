@@ -217,18 +217,43 @@ function animateBeatBorder(){
   analyser.getByteFrequencyData(dataArray);
 
   const bars = document.querySelectorAll(".beat-row span");
-  const bass = dataArray[2];
-  const hue = (bass * 2.5) % 360;
-  const glow = `hsl(${hue},100%,60%)`;
 
-  screenGlow.style.boxShadow = `0 0 ${bass/2}px ${glow}`;
+  // 🔊 Pick real bass (sub + kick)
+  const bass =
+    (dataArray[1] +
+     dataArray[2] +
+     dataArray[3]) / 3;
 
+  // 🎨 Dynamic glow color
+  const hue = (bass * 2.2) % 360;
+  const glow = `hsl(${hue}, 100%, 60%)`;
+
+  // ⚡ Beat flash trigger (only on peaks)
+  if(bass > 145){
+    screenGlow.classList.add("active");
+
+    screenGlow.style.color = glow;
+    screenGlow.style.boxShadow = `
+      inset 0 0 120px ${glow},
+      inset 0 0 260px ${glow}
+    `;
+
+    setTimeout(()=>{
+      screenGlow.classList.remove("active");
+      screenGlow.style.boxShadow = `inset 0 0 60px ${glow}`;
+    }, 70); // flash duration
+  }
+
+  // 🎚️ Animate border bars smoothly
   bars.forEach((bar,i)=>{
     const v = dataArray[i % dataArray.length];
-    const scale = Math.max(0.35, v / 120);
+    const scale = Math.max(0.3, v / 110);
+
     bar.style.transform = `scaleY(${scale})`;
     bar.style.background = glow;
-    bar.style.boxShadow = `0 0 ${10 + v/3}px ${glow}`;
+    bar.style.boxShadow = `
+      0 0 ${8 + v/2}px ${glow}
+    `;
   });
 }
 
