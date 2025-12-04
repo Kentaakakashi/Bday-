@@ -1,118 +1,94 @@
 /* =========================
-   GLOBAL ELEMENTS
+   GLOBAL VIDEO SETUP
 ========================= */
 const bgVideo = document.getElementById("bgVideo");
 
-let MUSIC = document.getElementById("bgm");
-if (!MUSIC) {
-  MUSIC = new Audio("assets/music.mp3");
-  MUSIC.id = "bgm";
-  MUSIC.loop = true;
-  MUSIC.volume = 0.45;
-  document.body.appendChild(MUSIC);
+if (!bgVideo) {
+  console.error("bgVideo element not found!");
 }
 
-const CLICK = new Audio("assets/click.mp3");
+bgVideo.loop = true;
+bgVideo.volume = 0.6;
 
 /* =========================
-   PERSIST MUSIC TIME
+   RESTORE VIDEO TIME
 ========================= */
-const savedTime = parseFloat(localStorage.getItem("bgTime") || "0");
-MUSIC.currentTime = savedTime;
+const savedTime = parseFloat(localStorage.getItem("videoTime") || "0");
+bgVideo.currentTime = savedTime;
 
 /* =========================
-   MOBILE AUTOPLAY FIX
+   PAGE CHECK
 ========================= */
-function forcePlayMusic() {
-  if (MUSIC.paused) {
-    MUSIC.play().catch(() => {});
-  }
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume();
-  }
-  document.removeEventListener("touchstart", forcePlayMusic);
-  document.removeEventListener("click", forcePlayMusic);
-}
-
-document.addEventListener("touchstart", forcePlayMusic, { once: true });
-document.addEventListener("click", forcePlayMusic, { once: true });
+const isWishPage = location.pathname.toLowerCase().includes("wish");
 
 /* =========================
-   AUTO PLAY ON LOAD
+   AUTO PLAY LOGIC
 ========================= */
 window.addEventListener("load", () => {
-  if (!location.pathname.includes("edit") && !location.pathname.includes("recordings")) {
-    MUSIC.play().catch(() => {});
+  if (!isWishPage) {
+    bgVideo.muted = false;
+    bgVideo.play().catch(() => {});
+  } else {
+    bgVideo.pause();
+    bgVideo.muted = true;
+    bgVideo.style.opacity = "0";
   }
 });
 
 /* =========================
-   FADE OUT FOR EDIT/RECORD
+   SAVE TIME ALWAYS
 ========================= */
-if (
-  location.pathname.includes("edit") ||
-  location.pathname.includes("recordings")
-) {
-  const fade = setInterval(() => {
-    if (MUSIC.volume > 0.02) {
-      MUSIC.volume -= 0.02;
-    } else {
-      MUSIC.pause();
-      clearInterval(fade);
-    }
-  }, 40);
+setInterval(() => {
+  localStorage.setItem("videoTime", bgVideo.currentTime);
+}, 500);
 
-  if (bgVideo) {
-    bgVideo.classList.add("video-hide");
-  }
-} else {
-  if (bgVideo) bgVideo.classList.remove("video-hide");
+/* =========================
+   WISH PAGE HARD BLOCK
+========================= */
+if (isWishPage) {
+  bgVideo.pause();
+  bgVideo.muted = true;
+  bgVideo.style.opacity = "0";
+  bgVideo.style.pointerEvents = "none";
 }
 
 /* =========================
-   SAVE TIME ON EXIT
+   RESUME ON LEAVE WISH PAGE
 ========================= */
-window.addEventListener("beforeunload", () => {
-  localStorage.setItem("bgTime", MUSIC.currentTime);
-});
-
-/* =========================
-   CLICK SOUND
-========================= */
-function playClick() {
-  CLICK.currentTime = 0;
-  CLICK.play().catch(() => {});
+if (!isWishPage) {
+  bgVideo.muted = false;
+  bgVideo.style.opacity = "1";
 }
 
 /* =========================
-   PAUSE BUTTON
+   PAUSE BUTTON (VIDEO BASED)
 ========================= */
 (function () {
   const btn = document.getElementById("musicToggle");
   if (!btn) return;
 
-  btn.textContent = MUSIC.paused ? "▶️" : "⏸️";
+  btn.textContent = bgVideo.paused ? "▶️" : "⏸️";
 
   btn.addEventListener("click", () => {
-    if (MUSIC.paused) {
-      MUSIC.play();
+    if (bgVideo.paused) {
+      bgVideo.play();
       btn.textContent = "⏸️";
     } else {
-      MUSIC.pause();
+      bgVideo.pause();
       btn.textContent = "▶️";
     }
   });
 })();
 
 /* =========================
-   BEAT ANALYSER
+   BEAT ANALYSER (VIDEO AUDIO)
 ========================= */
-let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let source = audioCtx.createMediaElementSource(MUSIC);
-let analyser = audioCtx.createAnalyser();
-analyser.fftSize = 128;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const source = audioCtx.createMediaElementSource(bgVideo);
+const analyser = audioCtx.createAnalyser();
 
-let dataArray = new Uint8Array(analyser.frequencyBinCount);
+analyser.fftSize = 256;
+const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
 source.connect(analyser);
 analyser.connect(audioCtx.destination);
@@ -125,7 +101,7 @@ screenGlow.id = "screen-glow";
 document.body.appendChild(screenGlow);
 
 /* =========================
-   BEAT BORDER
+   BEAT BORDER CREATION
 ========================= */
 function createBeatBorder() {
   const border = document.createElement("div");
@@ -135,7 +111,7 @@ function createBeatBorder() {
     const row = document.createElement("div");
     row.className = `beat-row beat-${side}`;
 
-    const count = side === "top" || side === "bottom" ? 36 : 18;
+    const count = side === "top" || side === "bottom" ? 48 : 24;
 
     for (let i = 0; i < count; i++) {
       row.appendChild(document.createElement("span"));
@@ -149,89 +125,26 @@ function createBeatBorder() {
 createBeatBorder();
 
 /* =========================
-   BEAT ANIMATION LOOP (FIXED)
+   BEAT ANIMATION LOOP
 ========================= */
 function animateBeatBorder() {
   requestAnimationFrame(animateBeatBorder);
-
-  if (MUSIC.paused) return;
-
   analyser.getByteFrequencyData(dataArray);
 
   const bars = document.querySelectorAll(".beat-row span");
-
-  let bass = dataArray[1] || 0;
-  bass = bass * 0.65; // ✅ softens glow & spikes
-
-  let hue = (bass * 2.2) % 360;
-  let glowColor = `hsl(${hue},100%,60%)`;
+  const bass = dataArray[2] || 0;
+  const hue = (bass * 3) % 360;
+  const glowColor = `hsl(${hue},100%,60%)`;
 
   screenGlow.style.background = glowColor;
-  screenGlow.style.opacity = bass / 300;
+  screenGlow.style.opacity = bass / 255;
 
   bars.forEach((bar, i) => {
     const v = dataArray[i % dataArray.length];
-    const scale = Math.max(0.25, v / 160);
-
+    const scale = Math.max(0.4, v / 120);
     bar.style.transform = `scaleY(${scale})`;
     bar.style.background = glowColor;
-    bar.style.boxShadow = `0 0 ${8 + v / 6}px ${glowColor}`;
+    bar.style.boxShadow = `0 0 ${12 + v / 4}px ${glowColor}`;
   });
 }
 animateBeatBorder();
-
-/* =========================
-   SPARKLE CURSOR (FIXED CLASS)
-========================= */
-document.addEventListener("mousemove", e => {
-  const spark = document.createElement("div");
-  spark.className = "cursor-trail"; // ✅ FIXED
-  spark.style.left = e.clientX + "px";
-  spark.style.top = e.clientY + "px";
-  document.body.appendChild(spark);
-  setTimeout(() => spark.remove(), 500);
-});
-
-/* =========================
-   FLOATING EMOJIS
-========================= */
-setInterval(() => {
-  const el = document.createElement("div");
-  el.className = "float-emoji";
-  el.textContent = ["💖", "✨", "🎀", "💕"][Math.floor(Math.random() * 4)];
-  el.style.left = Math.random() * window.innerWidth + "px";
-  el.style.bottom = "-30px";
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 7000);
-}, 700);
-
-/* =========================
-   MEMORIES CAROUSEL (FIXED)
-========================= */
-(function () {
-  const carousel = document.querySelector(".carousel");
-  if (!carousel) return;
-
-  const track = carousel.querySelector(".slide-track");
-  const slides = Array.from(track.children);
-  const prev = document.getElementById("prevSlide");
-  const next = document.getElementById("nextSlide");
-
-  let idx = 0;
-
-  function update() {
-    track.style.transform = `translateX(-${idx * 100}%)`;
-  }
-
-  prev?.addEventListener("click", () => {
-    idx = (idx - 1 + slides.length) % slides.length;
-    update();
-  });
-
-  next?.addEventListener("click", () => {
-    idx = (idx + 1) % slides.length;
-    update();
-  });
-
-  update();
-})();
