@@ -157,8 +157,9 @@ body { cursor:none; }
   transition: opacity 1s ease;
 }
 .video-hide{
-  opacity:0;
+  opacity:0 !important;
   pointer-events:none;
+  transition: opacity 1s ease;
 }
 
 /* =======================
