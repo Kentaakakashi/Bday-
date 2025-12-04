@@ -441,3 +441,28 @@ body.beat-shock{
   50%{ filter: brightness(1.25); }
   100%{ filter: brightness(1); }
 }
+
+/* ===== BEAT SCREEN GLOW ===== */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9998;
+  background: radial-gradient(circle at center,
+    rgba(255,0,150,0.25),
+    transparent 55%
+  );
+  opacity:0;
+  transition: opacity .08s linear;
+}
+
+body.beat-flash::after{
+  opacity:1;
+}
+
+body.beat-shock{
+  filter: brightness(1.18) saturate(1.25);
+  transform: scale(1.006);
+  transition: filter .05s linear, transform .05s linear;
+}
