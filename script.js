@@ -202,28 +202,33 @@ function animateBeatBorder(){
   requestAnimationFrame(animateBeatBorder);
   analyser.getByteFrequencyData(dataArray);
 
-  let bass = dataArray[2];
   const bars = document.querySelectorAll(".beat-row span");
+  let bass = dataArray[2];
+
+  let hue = (bass * 2.5) % 360;
+  let glowColor = `hsl(${hue},100%,65%)`;
+  screenGlow.style.color = glowColor;
 
   bars.forEach((bar,i)=>{
     const v = dataArray[i % dataArray.length];
-    const scale = Math.max(0.3, v / 120);
+    const scale = Math.max(0.4, v / 110);
 
     bar.style.transform = `scaleY(${scale})`;
-
-    const hue = (v * 2.2) % 360;
-    bar.style.background = `hsl(${hue},100%,60%)`;
-    bar.style.boxShadow = `0 0 ${14 + v/3}px hsl(${hue},100%,60%)`;
+    bar.style.background = glowColor;
+    bar.style.boxShadow = `
+      0 0 ${14 + v/3}px ${glowColor},
+      0 0 ${30 + v/2}px ${glowColor}
+    `;
   });
 
-  /* ===== BASS SCREEN GLOW + SHOCK ===== */
+  /* ===== HARD BEAT IMPACT ===== */
   if(bass > 160){
-    document.body.classList.add("beat-flash");
+    screenGlow.classList.add("active");
     document.body.classList.add("beat-shock");
 
     setTimeout(()=>{
-      document.body.classList.remove("beat-flash");
+      screenGlow.classList.remove("active");
       document.body.classList.remove("beat-shock");
-    }, 80);
+    }, 70);
   }
 }
