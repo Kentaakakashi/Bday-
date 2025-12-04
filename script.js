@@ -241,3 +241,63 @@ if(
 ){
   MUSIC.pause();
        }
+
+/* =========================
+   MEMORIES CAROUSEL – FIXED NEXT/PREV
+========================= */
+(function(){
+  const carousel = document.querySelector(".carousel");
+  if(!carousel) return;
+
+  const track = carousel.querySelector(".slide-track");
+  const slides = Array.from(track.children);
+  const next = document.getElementById("nextSlide");
+  const prev = document.getElementById("prevSlide");
+
+  let index = 0;
+
+  function update(){
+    track.style.transform = `translateX(-${index * 100}%)`;
+
+    const capBox = document.querySelector(".caption");
+    if(capBox){
+      capBox.textContent = slides[index].dataset.caption || "";
+    }
+  }
+
+  if(next){
+    next.addEventListener("click", ()=>{
+      index = (index + 1) % slides.length;
+      update();
+    });
+  }
+
+  if(prev){
+    prev.addEventListener("click", ()=>{
+      index = (index - 1 + slides.length) % slides.length;
+      update();
+    });
+  }
+
+  // ✅ Touch swipe for mobile
+  let startX = null;
+  carousel.addEventListener("touchstart", e=>{
+    startX = e.touches[0].clientX;
+  });
+
+  carousel.addEventListener("touchend", e=>{
+    if(startX === null) return;
+    const diff = e.changedTouches[0].clientX - startX;
+
+    if(diff > 50){
+      index = (index - 1 + slides.length) % slides.length;
+    }else if(diff < -50){
+      index = (index + 1) % slides.length;
+    }
+
+    update();
+    startX = null;
+  });
+
+  update();
+})();
