@@ -526,3 +526,33 @@ body.beat-shock {
 #musicToggle:active{
   transform: scale(.92);
 }
+
+/* === VIDEO BACKGROUND HUB === */
+#bg-video{
+  position: fixed;
+  inset: 0;
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  z-index:-1;
+  opacity:1;
+  transition: opacity 1s ease;
+  filter: blur(2px) brightness(0.8);
+}
+
+/* === SPARKLE TRAIL === */
+.cursor-trail{
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events:none;
+  background: radial-gradient(circle,#fff,#ff5fa3 60%,transparent 70%);
+  box-shadow:0 0 12px #ff5fa3,0 0 24px #ff5fa3;
+  transform:translate(-50%,-50%);
+  animation: trailFade .6s linear forwards;
+}
+
+@keyframes trailFade{
+  to{opacity:0; transform:translate(-50%,-50%) scale(.2);}
+}
