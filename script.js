@@ -233,16 +233,21 @@ function animateBeatBorder(){
   }
 }
 
-const musicBtn = document.getElementById("musicToggle");
 
-if(musicBtn){
-  musicBtn.addEventListener("click", ()=>{
+// === GLOBAL MUSIC BUTTON (AUTO-INJECT) ===
+(function(){
+  const btn = document.createElement("button");
+  btn.id = "musicToggle";
+  btn.textContent = MUSIC.paused ? "▶️" : "⏸️";
+  document.body.appendChild(btn);
+
+  btn.addEventListener("click", ()=>{
     if(MUSIC.paused){
       MUSIC.play();
-      musicBtn.textContent = "⏸️";
+      btn.textContent = "⏸️";
     }else{
       MUSIC.pause();
-      musicBtn.textContent = "▶️";
+      btn.textContent = "▶️";
     }
   });
-}
+})();
