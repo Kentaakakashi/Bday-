@@ -23,12 +23,46 @@ html,body{height:100%;margin:0;font-family:"Poppins", "Comic Sans MS", system-ui
 /* sparkle cursor (we hide native cursor) */
 body { cursor: none; }
 .cursor-spark {
-  position:fixed; width:18px; height:18px; border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0.6));
-  pointer-events:none; transform:translate(-50%,-50%); z-index:99999;
-  box-shadow:0 6px 18px rgba(255,120,180,0.35);
-  mix-blend-mode:screen;
-  transition: transform .08s linear;
+  position:fixed;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:99999;
+
+  background: radial-gradient(circle, #fff, #ff77c8 60%, transparent 70%);
+  box-shadow:
+    0 0 12px #ff77c8,
+    0 0 24px #ff77c8,
+    0 0 40px rgba(255,120,200,.6);
+
+  transform: translate(-50%, -50%);
+  transition: transform .06s linear, left .06s linear, top .06s linear;
+  mix-blend-mode: screen;
+}
+.cursor-trail {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+
+  background: radial-gradient(circle, #fff, #ff5fa3 60%, transparent 70%);
+  box-shadow:
+    0 0 10px #ff5fa3,
+    0 0 20px rgba(255,90,160,.8);
+
+  transform: translate(-50%, -50%);
+  animation: trailFade 0.6s linear forwards;
+  mix-blend-mode: screen;
+}
+
+@keyframes trailFade {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
 }
 
 /* floating hearts & emojis */
