@@ -222,15 +222,7 @@ function animateBeatBorder(){
   });
 
   /* ===== HARD BEAT IMPACT ===== */
-  if(bass > 160){
-    screenGlow.classList.add("active");
-    document.body.classList.add("beat-shock");
-
-    setTimeout(()=>{
-      screenGlow.classList.remove("active");
-      document.body.classList.remove("beat-shock");
-    }, 70);
-  }
+  
 }
 
 
