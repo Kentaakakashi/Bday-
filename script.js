@@ -1,25 +1,31 @@
 /* =========================
-   GLOBAL VIDEO SETUP
+   VIDEO BASE SETUP
 ========================= */
 const bgVideo = document.getElementById("bgVideo");
 
 if (!bgVideo) {
-  console.error("bgVideo element not found!");
+  console.error("❌ bgVideo not found in HTML");
 }
 
 bgVideo.loop = true;
-bgVideo.volume = 0.6;
+bgVideo.volume = 0.7;
+bgVideo.playsInline = true;
 
 /* =========================
-   RESTORE VIDEO TIME
+   PAGE DETECTION (FIXED)
 ========================= */
-const savedTime = parseFloat(localStorage.getItem("videoTime") || "0");
-bgVideo.currentTime = savedTime;
+const isWishPage =
+  document.body.classList.contains("wish-page") ||
+  location.pathname.toLowerCase().includes("wish");
 
 /* =========================
-   PAGE CHECK
+   RESTORE LAST TIME
 ========================= */
-const isWishPage = location.pathname.toLowerCase().includes("wish");
+let savedTime = parseFloat(localStorage.getItem("videoTime") || "0");
+
+bgVideo.addEventListener("loadedmetadata", () => {
+  if (!isNaN(savedTime)) bgVideo.currentTime = savedTime;
+});
 
 /* =========================
    AUTO PLAY LOGIC
@@ -27,41 +33,44 @@ const isWishPage = location.pathname.toLowerCase().includes("wish");
 window.addEventListener("load", () => {
   if (!isWishPage) {
     bgVideo.muted = false;
-    bgVideo.play().catch(() => {});
+    bgVideo.classList.remove("video-hide");
+
+    const playPromise = bgVideo.play();
+    if (playPromise) playPromise.catch(() => {});
   } else {
-    bgVideo.pause();
-    bgVideo.muted = true;
-    bgVideo.style.opacity = "0";
+    hideVideoHard();
   }
 });
 
 /* =========================
-   SAVE TIME ALWAYS
+   SAVE VIDEO TIME ALWAYS
 ========================= */
 setInterval(() => {
-  localStorage.setItem("videoTime", bgVideo.currentTime);
-}, 500);
+  if (!bgVideo.paused) {
+    localStorage.setItem("videoTime", bgVideo.currentTime);
+  }
+}, 400);
 
 /* =========================
-   WISH PAGE HARD BLOCK
+   HARD HIDE FOR WISH PAGE
 ========================= */
-if (isWishPage) {
+function hideVideoHard() {
   bgVideo.pause();
   bgVideo.muted = true;
-  bgVideo.style.opacity = "0";
+  bgVideo.classList.add("video-hide");
   bgVideo.style.pointerEvents = "none";
 }
 
 /* =========================
-   RESUME ON LEAVE WISH PAGE
+   RESUME AFTER WISH
 ========================= */
 if (!isWishPage) {
   bgVideo.muted = false;
-  bgVideo.style.opacity = "1";
+  bgVideo.classList.remove("video-hide");
 }
 
 /* =========================
-   PAUSE BUTTON (VIDEO BASED)
+   PAUSE BUTTON (VIDEO ONLY)
 ========================= */
 (function () {
   const btn = document.getElementById("musicToggle");
@@ -81,7 +90,7 @@ if (!isWishPage) {
 })();
 
 /* =========================
-   BEAT ANALYSER (VIDEO AUDIO)
+   AUDIO ANALYSER (VIDEO)
 ========================= */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const source = audioCtx.createMediaElementSource(bgVideo);
@@ -125,10 +134,13 @@ function createBeatBorder() {
 createBeatBorder();
 
 /* =========================
-   BEAT ANIMATION LOOP
+   BEAT ANIMATION
 ========================= */
 function animateBeatBorder() {
   requestAnimationFrame(animateBeatBorder);
+
+  if (bgVideo.paused) return;
+
   analyser.getByteFrequencyData(dataArray);
 
   const bars = document.querySelectorAll(".beat-row span");
@@ -142,6 +154,7 @@ function animateBeatBorder() {
   bars.forEach((bar, i) => {
     const v = dataArray[i % dataArray.length];
     const scale = Math.max(0.4, v / 120);
+
     bar.style.transform = `scaleY(${scale})`;
     bar.style.background = glowColor;
     bar.style.boxShadow = `0 0 ${12 + v / 4}px ${glowColor}`;
