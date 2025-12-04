@@ -1,117 +1,199 @@
-/* ===============================
-   VIDEO + MASTER AUDIO ENGINE
-================================ */
+/* =========================
+   GLOBAL ELEMENTS
+========================= */
+const bgVideo = document.getElementById("bgVideo");
+let MUSIC = document.getElementById("bgm");
+if(!MUSIC){
+  MUSIC = new Audio("assets/music.mp3");
+  MUSIC.id = "bgm";
+  MUSIC.loop = true;
+  document.body.appendChild(MUSIC);
+}
+MUSIC.volume = 0.45;
 
-const VIDEO = document.getElementById("bgVideo");
-VIDEO.muted = false;
-VIDEO.volume = 0.6;
+const CLICK = new Audio("assets/click.mp3");
 
-let audioCtx, analyser, dataArray, beatInit=false;
+/* =========================
+   PERSIST MUSIC TIME
+========================= */
+const savedTime = parseFloat(localStorage.getItem("bgTime") || "0");
+MUSIC.currentTime = savedTime;
 
-/* ===== AUTO PLAY FIX ===== */
-function unlockSystem(){
-  VIDEO.play().catch(()=>{});
-  
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    const source = audioCtx.createMediaElementSource(VIDEO);
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    dataArray = new Uint8Array(analyser.frequencyBinCount);
+/* =========================
+   AUTO PLAY (SAFE)
+========================= */
+window.addEventListener("load", ()=>{
+  if(!location.pathname.includes("edit") && !location.pathname.includes("recordings")){
+    MUSIC.play().catch(()=>{});
+  }
+});
 
-    source.connect(analyser);
-    analyser.connect(audioCtx.destination);
+/* =========================
+   FADE OUT FOR EDIT/RECORD
+========================= */
+if(location.pathname.includes("edit") || location.pathname.includes("recordings")){
+  const fade = setInterval(()=>{
+    if(MUSIC.volume > 0){
+      MUSIC.volume -= 0.05;
+    }else{
+      MUSIC.pause();
+      clearInterval(fade);
+    }
+  },30);
 
-    createBeatBorder();
-    animateBeat();
-    beatInit = true;
+  if(bgVideo){
+    bgVideo.style.transition="opacity 1s";
+    bgVideo.style.opacity="0";
   }
 }
-window.addEventListener("pointerdown",unlockSystem,{once:true});
 
-/* ===== SAVE VIDEO TIME BETWEEN PAGES ===== */
-VIDEO.currentTime = localStorage.getItem("vTime") || 0;
-setInterval(()=>{
-  localStorage.setItem("vTime",VIDEO.currentTime);
-},1000);
+/* =========================
+   SAVE TIME ON EXIT
+========================= */
+window.addEventListener("beforeunload", ()=>{
+  localStorage.setItem("bgTime", MUSIC.currentTime);
+});
 
-/* ===== PAGE BASED VIDEO BEHAVIOR ===== */
-const page = location.pathname.split("/").pop();
-
-if(page !== "index.html"){
-  VIDEO.classList.add("video-hide");
+/* =========================
+   CLICK SOUND
+========================= */
+function playClick(){
+  CLICK.currentTime = 0;
+  CLICK.play().catch(()=>{});
 }
 
-if(page === "edit.html" || page === "recordings.html"){
-  VIDEO.pause();
-  VIDEO.classList.add("video-hide");
-}
+/* =========================
+   PAUSE BUTTON
+========================= */
+(function(){
+  const btn = document.getElementById("musicToggle");
+  if(!btn) return;
+  btn.textContent = MUSIC.paused ? "▶️" : "⏸️";
 
-/* ===== PAUSE BUTTON ===== */
-const btn = document.createElement("button");
-btn.id="musicToggle";
-btn.textContent="⏸️";
-document.body.appendChild(btn);
-
-btn.onclick=()=>{
-  if(VIDEO.paused){
-    VIDEO.play();
-    btn.textContent="⏸️";
-  }else{
-    VIDEO.pause();
-    btn.textContent="▶️";
-  }
-};
-
-/* ===============================
-   BEAT BORDER ENGINE
-================================ */
-function createBeatBorder(){
-  const b=document.createElement("div");
-  b.id="beat-border";
-  ["top","bottom","left","right"].forEach(side=>{
-    const row=document.createElement("div");
-    row.className=`beat-row beat-${side}`;
-    const count=side=="top"||side=="bottom"?48:24;
-    for(let i=0;i<count;i++) row.appendChild(document.createElement("span"));
-    b.appendChild(row);
+  btn.addEventListener("click", ()=>{
+    if(MUSIC.paused){
+      MUSIC.play();
+      btn.textContent="⏸️";
+    }else{
+      MUSIC.pause();
+      btn.textContent="▶️";
+    }
   });
-  document.body.appendChild(b);
-}
+})();
 
-function animateBeat(){
-  requestAnimationFrame(animateBeat);
+/* =========================
+   BEAT ANALYSER
+========================= */
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let source = audioCtx.createMediaElementSource(MUSIC);
+let analyser = audioCtx.createAnalyser();
+analyser.fftSize = 256;
+let dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+/* =========================
+   SCREEN GLOW
+========================= */
+const screenGlow = document.createElement("div");
+screenGlow.id="screen-glow";
+document.body.appendChild(screenGlow);
+
+/* =========================
+   BEAT BORDER
+========================= */
+function createBeatBorder(){
+  const border = document.createElement("div");
+  border.id = "beat-border";
+
+  ["top","bottom","left","right"].forEach(side=>{
+    const row = document.createElement("div");
+    row.className = `beat-row beat-${side}`;
+    const count = side==="top"||side==="bottom"?48:24;
+    for(let i=0;i<count;i++){
+      row.appendChild(document.createElement("span"));
+    }
+    border.appendChild(row);
+  });
+  document.body.appendChild(border);
+}
+createBeatBorder();
+
+/* =========================
+   BEAT ANIMATION LOOP
+========================= */
+function animateBeatBorder(){
+  requestAnimationFrame(animateBeatBorder);
   analyser.getByteFrequencyData(dataArray);
 
-  const bars=document.querySelectorAll(".beat-row span");
-  let bass=dataArray[3];
+  const bars = document.querySelectorAll(".beat-row span");
+  let bass = dataArray[2] || 0;
+  let hue = (bass * 3) % 360;
+  let glowColor = `hsl(${hue},100%,60%)`;
 
-  let hue=(bass*2.8)%360;
-  let glow=`hsl(${hue},100%,65%)`;
+  screenGlow.style.background = glowColor;
+  screenGlow.style.opacity = bass/255;
 
   bars.forEach((bar,i)=>{
-    const v=dataArray[i%dataArray.length];
-    bar.style.transform=`scaleY(${Math.max(.4,v/100)})`;
-    bar.style.background=glow;
-    bar.style.boxShadow=`0 0 ${20+v/2}px ${glow}`;
+    const v = dataArray[i % dataArray.length];
+    const scale = Math.max(0.4, v / 120);
+    bar.style.transform = `scaleY(${scale})`;
+    bar.style.background = glowColor;
+    bar.style.boxShadow = `0 0 ${15+v/3}px ${glowColor}`;
   });
 }
+animateBeatBorder();
 
-/* ===============================
-   SPARKLE CURSOR (REAL ONE)
-================================ */
-const trail=[];
-for(let i=0;i<10;i++){
-  const s=document.createElement("div");
-  s.className="spark";
-  document.body.appendChild(s);
-  trail.push(s);
-}
-document.addEventListener("mousemove",e=>{
-  trail.forEach((s,i)=>{
-    setTimeout(()=>{
-      s.style.left=e.clientX+"px";
-      s.style.top=e.clientY+"px";
-    },i*20);
-  });
+/* =========================
+   SPARKLE CURSOR TRAIL
+========================= */
+document.addEventListener("mousemove", e=>{
+  const spark = document.createElement("div");
+  spark.className="spark-trail";
+  spark.style.left = e.clientX+"px";
+  spark.style.top = e.clientY+"px";
+  document.body.appendChild(spark);
+  setTimeout(()=>spark.remove(),500);
 });
+
+/* =========================
+   FLOATING EMOJIS
+========================= */
+setInterval(()=>{
+  const el=document.createElement("div");
+  el.className="float-emoji";
+  el.textContent=["💖","✨","🎀","💕"][Math.floor(Math.random()*4)];
+  el.style.left=Math.random()*window.innerWidth+"px";
+  el.style.bottom="-30px";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),7000);
+},600);
+
+/* =========================
+   MEMORIES CAROUSEL FIX
+========================= */
+(function(){
+  const carousel=document.querySelector(".carousel");
+  if(!carousel) return;
+
+  const track=carousel.querySelector(".slide-track");
+  const slides=Array.from(track.children);
+  const prev=document.getElementById("prevSlide");
+  const next=document.getElementById("nextSlide");
+  let idx=0;
+
+  function update(){
+    track.style.transform=`translateX(-${idx*100}%)`;
+  }
+
+  prev?.addEventListener("click",()=>{
+    idx=(idx-1+slides.length)%slides.length;
+    update();
+  });
+  next?.addEventListener("click",()=>{
+    idx=(idx+1)%slides.length;
+    update();
+  });
+  update();
+})();
